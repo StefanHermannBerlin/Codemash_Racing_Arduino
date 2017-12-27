@@ -50,8 +50,8 @@ void loop() {
   updatePulseData();
   // Serial.print(theBPMs[0]); Serial.print(" - "); Serial.println(theBPMs[1]);
   
-  car1speed[0] = map(analogRead(trottlePins[0]), 140, 0, 0, 400);                                                   // get trottle reading and map to 0 to 400
-  car1speed[1] = map(analogRead(trottlePins[1]), 140, 0, 0, 400);                                                   // get trottle reading and map to 0 to 400
+  car1speed[0] = map(analogRead(trottlePins[0]), 600, 400, 0, 400);                                                   // get trottle reading and map to 0 to 400
+  car1speed[1] = map(analogRead(trottlePins[1]), 600, 400, 0, 400);                                                   // get trottle reading and map to 0 to 400
 
   trottle[0]=map(constrain(car1speed[0],0,400),0,400,0,100);                                                        // calculating trottle from 0 to 100
   trottle[1]=map(constrain(car1speed[1],0,400),0,400,0,100);                                                        // calculating trottle from 0 to 100
@@ -75,8 +75,8 @@ void loop() {
     outputTimer = millis();                                                                                         // reset output timer
   }
   stopIfFault();
-  md.setM1Speed(car1speed[0]);
-  md.setM2Speed(car1speed[1]);
+  md.setM1Speed(car1speed[0]*(-1));
+  md.setM2Speed(car1speed[1]*(1));
   
   
   delay(10);                                                                                                        // time to breathe
