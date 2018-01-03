@@ -11,7 +11,7 @@ float car1speed[] = {0, 0};                       // current speed of the cars
 // motor pins: 4,7,8,9,10,12,A0,A1                // pins used by motor driver shield
 int lightBarrierPins[] = {2, 3};                  // interupts for light barriers
 int trottlePins[] = {A4, A5};
-int trottle[] = {0,0};                            // stores the current trottle condition
+int trottle[] = {0, 0};                           // stores the current trottle condition
 
 boolean lightBarrier[] = {false, false};          // light barrier variables
 
@@ -23,7 +23,7 @@ long myTimer2 = 0;                                // timer for light barriers
 //int timeout = 100;
 int sensorTimeout = 300;                          // shortest time to break the light barrier again
 
-int pulsePins[] = {A2, A3};                       // the pins where the puls sensors are connected to
+int pulsePins[] = {A3, A2};                       // the pins where the puls sensors are connected to
 int ledPins[] = {5, 6};                           // the pins of the leds
 int threshold = 550;                              // threshold to differentiate heartbeat
 
@@ -37,7 +37,7 @@ void setup() {
   Serial.begin(250000);                                                          // speed to talk to processing
   md.init();                                                                     // initialising of the motor shield
   pinMode(ledPins[0], OUTPUT);                                                   // led output pin
-  pinMode(ledPins[1], OUTPUT);                                                   // led output pin 
+  pinMode(ledPins[1], OUTPUT);                                                   // led output pin
 
   pinMode(lightBarrierPins[0], INPUT);                                           // interrupt for light barrier
   pinMode(lightBarrierPins[1], INPUT);                                           // interrupt for light barrier
@@ -49,18 +49,13 @@ void setup() {
 void loop() {
   updatePulseData();
   // Serial.print(theBPMs[0]); Serial.print(" - "); Serial.println(theBPMs[1]);
-  
-  car1speed[0] = map(analogRead(trottlePins[0]), 600, 400, 0, 400);                                                   // get trottle reading and map to 0 to 400
-  car1speed[1] = map(analogRead(trottlePins[1]), 600, 400, 0, 400);                                                   // get trottle reading and map to 0 to 400
 
-  trottle[0]=map(constrain(car1speed[0],0,400),0,400,0,100);                                                        // calculating trottle from 0 to 100
-  trottle[1]=map(constrain(car1speed[1],0,400),0,400,0,100);                                                        // calculating trottle from 0 to 100
-  
-  currentMaxSpeed[0]=minSpeed+(constrain(theBPMs[0],minHeartrate,maxHeartrate)/maxHeartrate)*(maxSpeed-minSpeed);   // calculate current possible max speed
-  currentMaxSpeed[1]=minSpeed+(constrain(theBPMs[1],minHeartrate,maxHeartrate)/maxHeartrate)*(maxSpeed-minSpeed);   // calculate current possible max speed
-
-  car1speed[0] = constrain(car1speed[0], 0, currentMaxSpeed[0]);                                                    // set speed dependent on max possible speed and input
-  car1speed[1] = constrain(car1speed[1], 0, currentMaxSpeed[1]);                                                    // set speed dependent on max possible speed and input
+  for (int i = 0; i < 2; i++) {
+    currentMaxSpeed[i] = minSpeed + (theBPMs[i] / maxHeartrate) * (maxSpeed - minSpeed);                            // calculate current possible max speed (0 to 400)
+    trottle[i] = constrain(analogRead(trottlePins[i]), 400, 600);                                                   // read and constrain trottle
+    trottle[i] = map(trottle[i], 600, 400, 0, 100);                                                                 // map trottle from 0 to 100
+    car1speed[i] = map(trottle[i], 0, 100, 0, currentMaxSpeed[0]);                                                  // speed is map trottle from 0 to currentMaxSpeed
+  }
 
   if (outputTimer + outputTimeout < millis()) {                                                                     // serial output to processing
     Serial.print("P1="); Serial.println(int(theBPMs[0]));                                                           // output bpm
@@ -77,8 +72,8 @@ void loop() {
   stopIfFault();
   md.setM1Speed(car1speed[0]*(-1));
   md.setM2Speed(car1speed[1]*(1));
-  
-  
+
+
   delay(10);                                                                                                        // time to breathe
 }
 
@@ -102,6 +97,6 @@ void stopIfFault()
   if (md.getFault())
   {
     Serial.println("fault");
-    while(1);
+    while (1);
   }
 }

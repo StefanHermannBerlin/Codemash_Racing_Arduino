@@ -7,6 +7,7 @@ int updatePulseData() {                                                         
           float bpm=60000/(millis()-thePulseStopwatch[i]);                        // this is the duration from one pulse to the next
           if (bpm>theBPMs[i]) theBPMs[i]++;                                       // if current bpm higher the bpm, increase
           if (bpm<theBPMs[i]) theBPMs[i]--;                                       // if current bpm lower the bpm, decrease
+          constrain(theBPMs[i], minHeartrate, maxHeartrate);                      // constrain the bpm
           //Serial.print(i);Serial.print(" ");Serial.println(theBPMs[i]);
         }
         thePulseStopwatch[i] = millis();                                          // reset stopwatch
