@@ -3,8 +3,8 @@ DualMC33926MotorShield md;
 
 float minHeartrate = 60;                          // pulse sensors highest speed at this heartrate
 float maxHeartrate = 140;                         // pulse sensors highest speed at this heartrate
-float minSpeed = 200;                             // the minimal speed the cars can drive
-float maxSpeed = 400;                             // the maximal speed the cars can drive
+float minSpeed = 80;                             // the minimal speed the cars can drive
+float maxSpeed = 230;                             // the maximal speed the cars can drive
 float currentMaxSpeed[] = {0, 0};                 // storring the current Max speed information
 float car1speed[] = {0, 0};                       // current speed of the cars
 
@@ -24,7 +24,7 @@ long myTimer2 = 0;                                // timer for light barriers
 int sensorTimeout = 300;                          // shortest time to break the light barrier again
 
 int pulsePins[] = {A3, A2};                       // the pins where the puls sensors are connected to
-int ledPins[] = {5, 6};                           // the pins of the leds
+int ledPins[] = {6, 5};                           // the pins of the leds
 int threshold = 550;                              // threshold to differentiate heartbeat
 
 float theBPMs[] = {66, 66};                       // default value for pulses
@@ -34,7 +34,7 @@ int thePulseMinTime = 500;                        // minimal possible time betwe
 int thePulseMaxTime = 1500;                       // maximal possible time between beats
 
 void setup() {
-  Serial.begin(250000);                                                          // speed to talk to processing
+  Serial.begin(115200);                                                          // speed to talk to processing
   md.init();                                                                     // initialising of the motor shield
   pinMode(ledPins[0], OUTPUT);                                                   // led output pin
   pinMode(ledPins[1], OUTPUT);                                                   // led output pin
@@ -43,7 +43,6 @@ void setup() {
   pinMode(lightBarrierPins[1], INPUT);                                           // interrupt for light barrier
   attachInterrupt(digitalPinToInterrupt(lightBarrierPins[0]), carOn1, HIGH);     // interrupt for light barrier
   attachInterrupt(digitalPinToInterrupt(lightBarrierPins[1]), carOn2, HIGH);     // interrupt for light barrier
-
 }
 
 void loop() {
@@ -67,14 +66,17 @@ void loop() {
     Serial.print("S2="); Serial.println(int(car1speed[1]));                                                         // output car speed
     Serial.print("X2="); Serial.println(int(currentMaxSpeed[1]));                                                   // output maximal possible car speed
     Serial.println("");
-    outputTimer = millis();                                                                                         // reset output timer
+    outputTimer = millis();                                                                                        // reset output timer
   }
-  stopIfFault();
+  //stopIfFault();
   md.setM1Speed(car1speed[0]*(-1));
   md.setM2Speed(car1speed[1]*(1));
 
+  //md.setM1Speed(-100);
+  //md.setM2Speed(100);
 
-  delay(10);                                                                                                        // time to breathe
+  
+  delay(20);                                                                                                        // time to breathe
 }
 
 
