@@ -14,4 +14,7 @@ It is a sensor and motor controll unit for a slot car racing (Carrera tracks).
 - 2x IR Light barriers (IR LED + IR Phototransistor)
 
 The circuit can be found in the repository as well.
+- circuit-without-motorcontroller.png
+- pinout.png
+
 
